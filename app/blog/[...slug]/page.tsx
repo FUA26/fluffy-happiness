@@ -1,44 +1,41 @@
-import { notFound } from "next/navigation"
-import { allPosts } from "contentlayer/generated"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+import { notFound } from "next/navigation";
+import { allPosts } from "contentlayer/generated";
 
-import "@/styles/mdx.css"
+import "@/styles/mdx.css";
 
-import Image from "next/image"
-import Link from "next/link"
+import Image from "next/image";
+import Link from "next/link";
 
-import { cn, formatDate } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
-import { Icons } from "@/components/ui/icons"
-import { Mdx } from "@/components/mdx/mdx-components"
-
+import { cn, formatDate } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
+import { Icons } from "@/components/ui/icons";
+import { Mdx } from "@/components/mdx/mdx-components";
 
 interface PostPageProps {
   params: {
-    slug: string[]
-  }
+    slug: string[];
+  };
 }
 
 async function getPostFromParams(params: { slug: any }) {
-  const slug = params?.slug?.join("/")
-  const post = allPosts.find((post) => post.slugAsParams === slug)
+  const slug = params?.slug?.join("/");
+  const post = allPosts.find((post) => post.slugAsParams === slug);
 
   if (!post) {
-    null
+    null;
   }
 
-  return post
+  return post;
 }
 
-
-
 export default async function PostPage({ params }: PostPageProps) {
-  const post = await getPostFromParams(params)
+  const post = await getPostFromParams(params);
 
   if (!post) {
-    notFound()
+    notFound();
   }
-
-
 
   return (
     <article className="container relative max-w-3xl py-6 lg:py-10">
@@ -64,7 +61,6 @@ export default async function PostPage({ params }: PostPageProps) {
         <h1 className="mt-2 inline-block font-heading text-4xl leading-tight lg:text-5xl">
           {post.title}
         </h1>
-        
       </div>
       {post.image && (
         <Image
@@ -85,5 +81,5 @@ export default async function PostPage({ params }: PostPageProps) {
         </Link>
       </div>
     </article>
-  )
+  );
 }

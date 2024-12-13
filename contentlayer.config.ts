@@ -1,10 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // contentlayer.config.ts
 import { defineDocumentType, makeSource, ComputedFields } from "contentlayer2/source-files";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import { getSingletonHighlighter } from "shiki";
+import { visit } from 'unist-util-visit';
+import { transformerCopyButton } from '@rehype-pretty/transformers'
+import { codeToHtml } from 'shiki'
+// import { getSingletonHighlighter } from "shiki";
 
 /** @type {import('contentlayer/source-files').ComputedFields} */
 const computedFields: ComputedFields = {
@@ -81,34 +85,45 @@ export default makeSource({
   mdx: {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [
+      () => (tree) => {
+        visit(tree, (node) => {
+          if (node?.type === 'element' && node?.tagName === 'pre') {
+            const [codeEl] = node.children;
+
+            if (codeEl.tagName !== 'code') return;
+
+            node.taw = codeEl?.children?.[0]?.value;
+          }
+        });
+      },
       rehypeSlug,
       [
-        rehypePrettyCode,
+        rehypePrettyCode as any,
         {
-          theme: "github-dark",
-          getSingletonHighlighter,
-          onVisitLine(node: { children: string | any[]; }) {
-            // Prevent lines from collapsing in `display: grid` mode, and allow empty
-            // lines to be copy/pasted
-            if (node.children.length === 0) {
-              node.children = [{ type: "text", value: " " }]
-            }
-          },
-          onVisitHighlightedLine(node: { properties: { className: string[]; }; }) {
-            node.properties.className.push("line--highlighted")
-          },
-          onVisitHighlightedWord(node: { properties: { className: string[]; }; }) {
-            node.properties.className = ["word--highlighted"]
-          },
+          theme: 'andromeeda',
+          transformers: [
+            transformerCopyButton({
+              visibility: 'always',
+              feedbackDuration: 3_000,
+            }),
+          ],
         },
       ],
       [
         rehypeAutolinkHeadings,
         {
-          properties: {
-            className: ["subheading-anchor"],
-            ariaLabel: "Link to section",
+          content: {
+            type: 'element',
+            tagName: 'span',
+            properties: {
+              className: ['icon-link'],
+              children: ['#'],
+            },
           },
+          properties: {
+            ariaLabel: 'Link to heading',
+          },
+          behavior: 'append',
         },
       ],
     ],

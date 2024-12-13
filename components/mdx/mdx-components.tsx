@@ -1,14 +1,14 @@
-import * as React from "react"
-import Image from "next/image"
+/* eslint-disable jsx-a11y/alt-text */
+import * as React from "react";
+import Image from "next/image";
 // import { useMDXComponent } from "next-contentlayer/hooks"
 
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
-
-import { Callout } from "./callout"
-import { MdxCard } from "./mdx-card"
-import { useMDXComponent } from "next-contentlayer2/hooks"
-import { MDXComponents } from 'mdx/types'
+import { Callout } from "./callout";
+import { MdxCard } from "./mdx-card";
+import { useMDXComponent } from "next-contentlayer2/hooks";
+import { MDXComponents } from "mdx/types";
 
 const components: MDXComponents = {
   h1: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
@@ -141,7 +141,7 @@ const components: MDXComponents = {
   code: ({ className, ...props }: React.HTMLAttributes<HTMLModElement>) => (
     <code
       className={cn(
-        "relative rounded border px-[0.3rem] py-[0.2rem] font-mono text-sm",
+        "relative px-[0.3rem] py-[0.2rem] font-mono text-sm",
         className
       )}
       {...props}
@@ -150,18 +150,18 @@ const components: MDXComponents = {
   Image: (props) => <Image {...props} />,
   Callout,
   Card: MdxCard,
-}
+};
 
 interface MdxProps {
-  code: string
+  code: string;
 }
 
 export function Mdx({ code }: MdxProps) {
-  const Component = useMDXComponent(code)
+  const Component = useMDXComponent(code);
 
   return (
     <div className="mdx">
       <Component components={components} />
     </div>
-  )
+  );
 }
